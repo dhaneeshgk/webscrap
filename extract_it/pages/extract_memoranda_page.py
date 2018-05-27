@@ -10,11 +10,9 @@ class Extract_Memoranda_Page:
         self.soup = BeautifulSoup(self.page_content,'html.parser')
         self.case_details = []
         self.get_case_metadata()
-        self.memorandas = {}
 
     def get_case_metadata(self):
         self.metadata_he =[i.string for i in self.soup.find('tr',attrs={"id":"c_row_"}).select('th a b')]
-        self.memorandas.update({"headers":self.metadata_he})
         return self.metadata_he
 
     def get_case_details(self):

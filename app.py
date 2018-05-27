@@ -1,7 +1,49 @@
 
 from extract_it.pages.extract_opinions_page import Extract_Opinions_Page
 from extract_it.pages.extract_memoranda_page import Extract_Memoranda_Page
+from extract_it.pages.extract_usc9_page import Extract_USC9_Page
 from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
+import user_details as yu
+from imp import reload
+
+class Import_Web_To_WittyParrot:
+
+    def __init__(self, url=""):
+        self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
+        self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
+        self.folders.reverse()
+        self.case_details = {}
+
+    def re_do(self):
+        reload(yu)
+        self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
+        self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
+        self.folders.reverse()
+        self.case_details = {}
+
+    def check_models_present(self):
+        models = {model["name"]:model["id"] for model in self.user.list_models()}
+        if not yu.user["model"] in models:
+            return {"status":False, "message":"Model {0} Not exists please create and move forward".format(yu.user["model"])}
+        else:
+            return {"status":True}
+
+    def extract_web_data(self):
+        op_types = Extract_USC9_Page(yu.user["url"]).get_opinion_types()
+        for i in op_types:
+            if op_types[i].find("https")<0:
+                n_url =  "https:"+op_types[i]
+            if i == "Published":
+                pu = Extract_Opinions_Page(n_url)
+                pu.get_number_of_page()
+                pu_case_details = pu.get_all_case_details(2)
+                self.case_details.update({i:{"case_details":pu_case_details,"headers":pu.get_case_metadata()}})
+            elif i == "Unpublished":
+                upu = Extract_Memoranda_Page(n_url)
+                upu_case_details = upu.get_case_details()
+                self.case_details.update({i:{"case_details":upu_case_details,"headers":upu.get_case_metadata()}})
+        return self.case_details
+
 
     
 
@@ -9,7 +51,14 @@ from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
 
 
 
+
+
+
+
 if __name__ == "__main__":
+    cd = Import_Web_To_WittyParrot()
+    cd.check_models_present()
+    len(cd.extract_web_data())
     pass
 
 
