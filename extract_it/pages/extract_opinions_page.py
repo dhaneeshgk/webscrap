@@ -2,9 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class Scrap_Opinions_Page:
+class Extract_Opinions_Page:
 
-    def __init__(self,page):
+    def __init__(self,page='https://www.ca9.uscourts.gov/opinions/'):
         self.page = page
         self.page_content = requests.get(self.page).content
         self.soup = BeautifulSoup(self.page_content,'html.parser')
@@ -14,11 +14,11 @@ class Scrap_Opinions_Page:
         self.opinions = {}
 
     def change_page(self,page):
-        self.page = page
-        self.page_content = requests.get(self.page).content
-        self.get_table()
+        # self.page = page
+        self.page_content = requests.get(page).content
         self.soup = BeautifulSoup(self.page_content,'html.parser')
-        self.case_details = []
+        self.get_table()
+        # self.case_details = []
     
     def get_table(self):
         self.cases = [i for i in self.soup.find('table', attrs={'id':'search-data-table'}).findAll('tr')]
@@ -26,7 +26,7 @@ class Scrap_Opinions_Page:
 
     def get_case_metadata(self):
         self.metadata_he = [str(header.string).replace("\xa0"," ") for header in self.cases[2].select('th a')]
-        self.opinions.update({"headers":self.metadata_he})
+        # self.opinions.update({"headers":self.metadata_he})
         return self.metadata_he
 
     
@@ -35,7 +35,6 @@ class Scrap_Opinions_Page:
         return self.metadata_h_s
 
     def get_case_details(self):
-        self.case_details = []
         for case in self.cases[3:]:
             case_detail = {}
             if case.find('tr'):
@@ -59,8 +58,19 @@ class Scrap_Opinions_Page:
         return self.number_of_cases
 
 
+    def get_number_of_page(self):
+        self.number_of_pages = int(self.cases[0].select('td tr td a')[-1].attrs['href'].split("=")[-1])
+        return self.number_of_pages
+
+    def get_all_case_details(self,page_number_count=2):
+        if not page_number_count: page_number_count = self.number_of_pages
+        for page_number in range(1,page_number_count):
+            self.change_page(self.page+"/index.php?pagenumber={0}".format(page_number))
+            self.get_case_details()
+        return self.case_details
+
 if __name__ == "__main__":
     url = 'https://www.ca9.uscourts.gov/opinions/'
-    ss = Scrap_Opinions_Page(url)
-    print(ss.get_number_of_records())
-    # print(ss.get_case_details())
+    ss = Extract_Opinions_Page(url)
+    print(ss.get_number_of_page())
+    print(len(ss.get_all_case_details(1)))

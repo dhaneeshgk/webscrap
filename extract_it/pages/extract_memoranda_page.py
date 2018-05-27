@@ -2,9 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class Scrap_Memoranda_Page:
+class Extract_Memoranda_Page:
 
-    def __init__(self,page):
+    def __init__(self,page='https://www.ca9.uscourts.gov/memoranda/'):
         self.page = page
         self.page_content = requests.get(self.page).content
         self.soup = BeautifulSoup(self.page_content,'html.parser')
@@ -14,7 +14,7 @@ class Scrap_Memoranda_Page:
 
     def get_case_metadata(self):
         self.metadata_he =[i.string for i in self.soup.find('tr',attrs={"id":"c_row_"}).select('th a b')]
-        self.memorandas.update("headers":self.metadata_he)
+        self.memorandas.update({"headers":self.metadata_he})
         return self.metadata_he
 
     def get_case_details(self):
@@ -39,7 +39,7 @@ class Scrap_Memoranda_Page:
 
 if __name__ == "__main__":
     url = 'https://www.ca9.uscourts.gov/memoranda/'
-    ss = Scrap_Memoranda_Page(url)
+    ss = Extract_Memoranda_Page(url)
     print(ss.get_number_of_records())
     # print(ss.get_case_details())
     

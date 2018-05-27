@@ -1,10 +1,18 @@
 
-import requests
-from bs4 import BeautifulSoup
+from extract_it.pages.extract_opinions_page import Extract_Opinions_Page
+from extract_it.pages.extract_memoranda_page import Extract_Memoranda_Page
+from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
+
+    
 
 
-def app():
+
+
+
+if __name__ == "__main__":
     pass
+
+
 
 
 
