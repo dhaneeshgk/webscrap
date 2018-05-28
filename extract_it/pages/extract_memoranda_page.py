@@ -15,9 +15,9 @@ class Extract_Memoranda_Page:
         self.metadata_he =[i.string for i in self.soup.find('tr',attrs={"id":"c_row_"}).select('th a b')]
         return self.metadata_he
 
-    def get_case_details(self):
+    def get_case_details(self,num_rec=10):
         self.case_details = [] 
-        for case in self.soup.select('table tbody')[0].findAll('tr')[0:1]:
+        for case in self.soup.select('table tbody')[0].findAll('tr')[3:num_rec+3]:
             case_detail = {}
             for detail in case.findAll('td'):
                 if detail.find('a'):
@@ -39,5 +39,5 @@ if __name__ == "__main__":
     url = 'https://www.ca9.uscourts.gov/memoranda/'
     ss = Extract_Memoranda_Page(url)
     print(ss.get_number_of_records())
-    # print(ss.get_case_details())
+    print(ss.get_case_details())
     

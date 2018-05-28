@@ -34,8 +34,8 @@ class Extract_Opinions_Page:
         self.metadata_h_s = {str(metadata_h.string).replace("\xa0"," "):metadata_h['href'] for metadata_h in self.cases[2].select('th a')}
         return self.metadata_h_s
 
-    def get_case_details(self):
-        for case in self.cases[3:]:
+    def get_case_details(self,num_rec=20):
+        for case in self.cases[3:num_rec+3]:
             case_detail = {}
             if case.find('tr'):
                 for metadata in case.find('tr').findAll("td"):
@@ -62,11 +62,11 @@ class Extract_Opinions_Page:
         self.number_of_pages = int(self.cases[0].select('td tr td a')[-1].attrs['href'].split("=")[-1])
         return self.number_of_pages
 
-    def get_all_case_details(self,page_number_count=2):
+    def get_all_case_details(self,page_number_count=2,num_rec=20):
         if not page_number_count: page_number_count = self.number_of_pages
         for page_number in range(1,page_number_count):
             self.change_page(self.page+"/index.php?pagenumber={0}".format(page_number))
-            self.get_case_details()
+            self.get_case_details(num_rec=num_rec)
         return self.case_details
 
 if __name__ == "__main__":
