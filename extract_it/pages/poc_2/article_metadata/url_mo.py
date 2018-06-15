@@ -16,6 +16,7 @@ class ArticleMetadata:
         if not elements:elements = config_mo.elements
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/ArticleMetadata/"
+        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.art_titels = {}

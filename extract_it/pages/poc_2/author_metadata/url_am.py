@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import config_am
+# import config_am
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,6 +19,7 @@ class AuthorMetadata:
         if not elements:elements = config_am.config_am
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/AuthorMetadata/"
+        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.author_name_details = {}

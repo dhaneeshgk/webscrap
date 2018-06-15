@@ -9,6 +9,7 @@ class IssueMetadata:
         if not pages:pages = config_oa.pages
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/IssueMetadata/"
+        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.data = {}
@@ -65,11 +66,11 @@ class IssueMetadata:
         count = 1
         # print(os.path.exists(store_path))
         while os.path.exists(store_path+file_ext):
-            print("in while")
+            # print("in while")
             store_path = store_path+"_"+str(count)
             count+=1
 
-        print(store_path)
+        # print(store_path)
         f = open(store_path+file_ext,"w")
         f.write(con)
         f.close()
