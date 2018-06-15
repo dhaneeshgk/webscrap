@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import config_mo
+# import config_mo
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,7 +11,8 @@ import time
 
 class ArticleMetadata:
 
-    def __init__(self, elements=None):
+    def __init__(self, elements=None, driver = None):
+        self.chrome_driver = driver
         if not elements:elements = config_mo.elements
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/ArticleMetadata/"
@@ -24,16 +25,24 @@ class ArticleMetadata:
         for i in elements:
             # print(i)
             if i=="title":
-                # self.article_title(elements[i], i)
+                print("\nStarted for Article Title extraction\n")
+                self.article_title(elements[i], i)
+                print("\nCompleted extraction for Title of Articles ID\n\n")
                 pass
             elif i == "sub_title":
-                # self.article_sub_title(elements[i], i)
+                print("\nStarted for Article Sub Title extraction\n")
+                self.article_sub_title(elements[i], i)
+                print("\nCompleted extraction for Abstract of Articles ID\n\n")
                 pass
             elif i == "abstract":
+                print("\nStarted for Article Abstract extraction\n")
                 self.abstract_text(elements[i], i)
+                print("\nCompleted extraction for Abstract of Articles ID\n\n")
                 pass
             elif i == "OA_Art":
-                # self.oa_art(elements[i], i)
+                print("\nStarted for OA or not details of Articles extraction\n")
+                self.oa_art(elements[i], i)
+                print("\nCompleted extraction for OA or not details of Articles ID\n\n")
                 pass
 
     def save_as_csv(self,objects,page,related=None,page_id=None):
@@ -82,21 +91,23 @@ class ArticleMetadata:
             # print(page)
             store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
             tsv = True
-        print("\n\n")
+        # print("\n\n")
         if tsv :file_ext = ".tsv"
         elif html: file_ext = ".html"
         else: file_ext = ".csv"
         count = 1
         # print(os.path.exists(store_path))
         while os.path.exists(store_path+file_ext):
-            print("in while")
+            # print("in while")
             store_path = store_path+"_"+str(count)
             count+=1
 
-        print(store_path)
+        # print(store_path)
         f = open(store_path+file_ext,"w")
         f.write(con)
         f.close()        
+
+        print("\nFor link  :: "+page+"\n")
 
     def article_title(self,pages, related):
 
@@ -104,7 +115,7 @@ class ArticleMetadata:
 
             if page_id == "jes":
                 pass
-                print("in jes")
+                # print("in jes")
                 page_content = requests.get(pages[page_id]).content
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 lists = [i for i in self.soup.find("form", attrs={"action":"/gca"}).findAll("div") if i.attrs["class"].count("toc-level")>0]
@@ -124,7 +135,7 @@ class ArticleMetadata:
                                     data_extracted[i.find("h2").text][q.find("h3").text].append(l.text.strip().replace("\n",""))
                                 titles_jes.append(l.text.strip().replace("\n",""))
                     else:
-                        print("in h2 jes")
+                        # print("in h2 jes")
                         if i.find("h2"): 
                             data_extracted.update({i.find("h2").text:[]})
                             for l in i.findAll("h4",attrs={"class","cit-title-group"}):
@@ -134,11 +145,11 @@ class ArticleMetadata:
                 # print(data)
                 self.save_as_csv(titles_jes, pages[page_id],related)
                 # print(titles_jes)
-                print("end of jes")
+                # print("end of jes")
 
             elif page_id=="iopscience":
                 pass
-                print("in iopscience")
+                # print("in iopscience")
                 page_content = requests.get(pages[page_id]).content
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 lists_article_title = [i.text.strip() for i in self.soup.findAll("a",attrs={"class","art-list-item-title"})]
@@ -154,10 +165,11 @@ class ArticleMetadata:
                 # print(oa_or_not)
                 # print(lists_article_title)
                 self.save_as_csv(lists_article_title, pages[page_id],related)
-                print("end of iopscience")
+                # print("end of iopscience")
 
             elif page_id=="scrip":
-                driver_scrip = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                # driver_scrip = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                driver_scrip = self.chrome_driver
                 driver_scrip.get(pages[page_id])
                 time.sleep(10)
                 driver_scrip.refresh()
@@ -276,7 +288,7 @@ class ArticleMetadata:
             
             if page_id == "sciencedirect":
                 for page in pages[page_id]:
-                    print(page)
+                    # print(page)
                     page_content = requests.get(page).content
                     self.soup = BeautifulSoup(page_content, 'html.parser')   
                     content="<html><body>{0}</body></html>"
@@ -295,7 +307,7 @@ class ArticleMetadata:
                     # ch = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
                     # ch.get(page)
                     # page_content = ch.page_source
-                    print(page_content)
+                    # print(page_content)
                     self.soup = BeautifulSoup(page_content, 'html.parser')   
                     content="<html><body>{0}</body></html>"
                     data_extracted = self.soup.find("section")
@@ -314,7 +326,8 @@ class ArticleMetadata:
 
             if page_id == "wiley":
                 for page in pages[page_id]:
-                    ch_wiley_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    # ch_wiley_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    ch_wiley_oa = self.chrome_driver
                     ch_wiley_oa.get(page)
                     art_wiley_tit = ch_wiley_oa.find_elements_by_xpath('//div[@class="issue-item"]/a/h2')
                     oa_art_wiley = {}
@@ -331,7 +344,8 @@ class ArticleMetadata:
 
             elif page_id == "jes":
                 oa_art_jes = {}
-                ch_jes_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                # ch_jes_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                ch_jes_oa = self.chrome_driver
                 for page in pages[page_id]:
                     ch_jes_oa.get(page)
                     page_d = {}
@@ -354,7 +368,8 @@ class ArticleMetadata:
             elif page_id == "sciencedirect":
 
                 for page in pages[page_id]:
-                    ch_sun_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    # ch_sun_oa = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    ch_sun_oa = self.chrome_driver
                     ch_sun_oa.get(page)
                     art_sun_tit = ch_sun_oa.find_elements_by_xpath('//span[@class="js-article-title"]')
                     oa_art_sun = {}
@@ -375,5 +390,7 @@ class ArticleMetadata:
 
 
 if __name__ == "__main__":
-    ArticleMetadata()
+    chrome_path = "/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver"
+    ch = webdriver.Chrome(executable_path=chrome_path)
+    ArticleMetadata(driver=ch)
     # get_data()

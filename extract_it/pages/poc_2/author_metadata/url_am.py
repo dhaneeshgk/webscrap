@@ -9,11 +9,13 @@ from selenium.webdriver.common.by import By
 import re
 import time
 import os
+import json
 
 
 class AuthorMetadata:
 
-    def __init__(self, elements=None):
+    def __init__(self, elements=None, driver = None):
+        self.chrome_driver = driver
         if not elements:elements = config_am.config_am
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/AuthorMetadata/"
@@ -26,26 +28,40 @@ class AuthorMetadata:
 
         for i in elements:
             if i=="author_name":
+                print("\nStarted for Author Name extraction\n")
                 self.author(elements[i], i)
+                print("\nCompleted extraction for Author Name\n\n")
                 pass
             elif i == "author_type":
+                print("\nStarted for Author Type extraction\n")
                 self.author_type(elements[i], i)
+                print("\nCompleted extraction for Author Type\n\n")
                 pass
             elif i == "affiliation":
+                print("\nStarted for Author Affiliation extraction\n\n")
                 self.affiliation(elements[i], i)
+                print("\nCompleted extraction for Author Affiliation\n\n")
                 pass
             elif i == "email_id":
+                print("\nStarted for Author Email ID extraction\n")
                 self.email_id(elements[i], i)
+                print("\nCompleted extraction for Author Email ID\n\n")
                 pass
 
     def save_as_csv(self,objects,page,related=None):
         store_path = ""
         tsv = False
         if related == "author_name":
+            # print(objects)
             headers = list(objects[0].keys())
             con = ",".join(headers)
             for i in objects:
-                con= con + "\n" + " ".join(i[headers[0]]) + "," + " ".join(i[headers[1]]) +"," +" ".join(i[headers[2]])
+                # if page == ""
+                if page == "http://journals.lww.com/alzheimerjournal/Abstract/2015/07000/Adaptive,_Dose_finding_Phase_2_Trial_Evaluating.3.aspx":
+                    con= con + "\n" + " ".join(i['initials']) + "," + " ".join(i['First Name']).replace(",","") +"," +" ".join(i['Last Name'])+"," +" ".join(i['Degress'])
+                    # print(" ".join(i['initials']) + "," + " ".join(i['First Name']).replace(",","") +"," +" ".join(i['Last Name'])+"," +" ".join(i['Degress']))  
+                else:
+                    con= con + "\n" + " ".join(i[headers[0]]) + "," + " ".join(i[headers[1]]) +"," +" ".join(i[headers[2]])
             if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
             # print(page)
             store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
@@ -55,13 +71,13 @@ class AuthorMetadata:
         if related == "author_type":
             con = ""
             for i in objects:
-                con= con + i + objects[i] + "\n"
+                con= con + i +","+objects[i] + "\n"
             if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
             # print(page)
             store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
 
         if related == "affiliation":
-            print(page,objects)
+            # print(page,objects)
             con = ""
             for i in objects:
                 if type(objects[i])==list:
@@ -87,16 +103,16 @@ class AuthorMetadata:
         count = 1
         # print(os.path.exists(store_path))
         while os.path.exists(store_path+file_ext):
-            print("in while")
+            # print("in while")
             store_path = store_path+"_"+str(count)
             count+=1
 
-        print(store_path)
+        # print(store_path)
         f = open(store_path+file_ext,"w")
         f.write(con)
         f.close()
 
-
+        print("\nFor link  :: "+page+"\n")
 
     def author(self,pages,related):
 
@@ -167,10 +183,9 @@ class AuthorMetadata:
                     page_content = requests.get(page).content
                     self.soup = BeautifulSoup(page_content, 'html.parser')
                     self.author_name_details.update({page:[]})
-                    print()
                     authors = [i.find("span").text.strip().split() for i in self.soup.findAll("li",attrs={"class","contributor"}) if i.find("span")]
-                    full_name = {"initials":[],"First Name":"","Last Name":""}
                     for name in authors:
+                        full_name = {"initials":[],"First Name":"","Last Name":""}
                         to_fetch = name.copy()
                         for names in to_fetch:
                             if len(names)==1:
@@ -181,31 +196,34 @@ class AuthorMetadata:
                         full_name.update({"First Name":name[:1]})
                         full_name.update({"Last Name":name[1:]})
                         self.author_name_details[page].append(full_name)
+                    # print(self.author_name_details[page])
                     self.save_as_csv(self.author_name_details[page],page,related=related)
+                    # self.save_as_csv(science_full_names,page,related=related)
                     pass
 
             if page_id == "lww":
-                # for page in pages[page_id]:
-                #     page_content = requests.get(page).content
-                #     self.soup = BeautifulSoup(page_content, 'html.parser')
-                #     self.author_name_details.update({page:[]})
-                #     authors =[j.strip().split() for j in [i for i in self.soup.findAll("section") if "id" in i.attrs if "article-authors" == i.attrs["id"]][0].text.split(";")]
-                #     for author in authors:
-                #         full_name = {"initials":[],"First Name":"","Last Name":"","Degress":[]}
-                #         to_fetch = author.copy()
-                #         for name in author:
-                #             if name.find("MD")>=0:
-                #                 full_name["Degress"].append("MD")
-                #                 to_fetch.pop(to_fetch.index(name))
-                #             elif name.find("PhD")>=0:
-                #                 full_name["Degress"].append("Phd")
-                #                 to_fetch.pop(to_fetch.index(name))
-                #             elif (len(name)<=2 and name.find(".")>0):
-                #                 full_name["initials"].append(name)
-                #                 to_fetch.pop(to_fetch.index(name)) 
-                #         full_name.update({"First Name":" ".join(to_fetch[:1])})
-                #         full_name.update({"Last Name":" ".join(to_fetch[1:])})    
-                #         self.author_name_details[page].append(full_name)     
+                for page in pages[page_id]:
+                    page_content = requests.get(page).content
+                    self.soup = BeautifulSoup(page_content, 'html.parser')
+                    self.author_name_details.update({page:[]})
+                    authors =[j.strip().split() for j in [i for i in self.soup.findAll("section") if "id" in i.attrs if "article-authors" == i.attrs["id"]][0].text.split(";")]
+                    for author in authors:
+                        full_name = {"initials":[],"First Name":"","Last Name":"","Degress":[]}
+                        to_fetch = author.copy()
+                        for name in author:
+                            if name.find("MD")>=0:
+                                full_name["Degress"].append("MD")
+                                to_fetch.pop(to_fetch.index(name))
+                            elif name.find("PhD")>=0:
+                                full_name["Degress"].append("Phd")
+                                to_fetch.pop(to_fetch.index(name))
+                            elif (len(name)<=2 and name.find(".")>0):
+                                full_name["initials"].append(name)
+                                to_fetch.pop(to_fetch.index(name)) 
+                        full_name.update({"First Name":" ".join(to_fetch[:1])})
+                        full_name.update({"Last Name":" ".join(to_fetch[1:])})    
+                        self.author_name_details[page].append(full_name)  
+                    self.save_as_csv(self.author_name_details[page],page,related=related)   
                     pass
             if page_id == "nejm":
                 for page in pages[page_id]:
@@ -339,7 +357,7 @@ class AuthorMetadata:
         for web_site in elements:
 
             if web_site == "nature":
-                print("nature")
+                # print("nature")
                 for page in elements[web_site]:
                     page_content = requests.get(page).content
                     self.soup = BeautifulSoup(page_content, 'html.parser')
@@ -355,7 +373,7 @@ class AuthorMetadata:
                 pass
 
             if web_site == "science":
-                print("science")
+                # print("science")
                 for page in elements[web_site]:
                     page_content = requests.get(page).content
                     self.soup = BeautifulSoup(page_content, 'html.parser')
@@ -369,23 +387,28 @@ class AuthorMetadata:
 
             if web_site == "nejm":
                 # print("nejm")
-                # for page in elements[web_site]:
-                #     page_content = requests.get(page).content
-                #     self.soup = BeautifulSoup(page_content, 'html.parser')
-                #     # print(self.soup.findAll("section"))
-                #     sec = [i for i in self.soup.findAll("section") if "id" in i.attrs if i.attrs["id"] == "author_affiliations"][0]
-                #     all_d = [i.find("p").text for i in sec.findAll("div") if "id" in i.attrs][0]
-                #     print(all_d)
+                for page in elements[web_site]:
+                    page_content = requests.get(page).content
+                    self.soup = BeautifulSoup(page_content, 'html.parser')
+                    # print(self.soup.findAll("section"))
+                    sec = [i for i in self.soup.findAll("section") if "id" in i.attrs if i.attrs["id"] == "author_affiliations"][0]
+                    all_d = [i.find("p").text for i in sec.findAll("div") if "id" in i.attrs][0]
+                    # print(all_d)
+                    loc = "/Users/dhaneesh.gk/Projects/own/web_import/extract_it/pages/poc_2/author_metadata/nejm.json"
+                    info_nejm = json.loads(open(loc,"r").read())
+                    self.author_affiliations_details.update({page:info_nejm})
+                    self.save_as_csv(self.author_affiliations_details[page],page,related=related)
                 pass
 
             if web_site == "ieee":
-                print("ieee")
-                for page in elements[web_site]:
-                    ch_ieee = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                # print("ieee")
+                for page in elements[web_site]:                   
+                    # ch_ieee = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    ch_ieee = self.chrome_driver
                     ch_ieee.get(page)
                     ch_ieee.maximize_window()
-                    ss = ch_ieee.execute_script("document.querySelectorAll('span')")
-                    print(ss)
+                    # ss = ch_ieee.execute_script("document.querySelectorAll('span')")
+                    # print(ss)
                     # affiliations = {page:{}}
                     # time.sleep(10)
                     # WebDriverWait(ch_ieee, 200).until(EC.element_to_be_clickable((By.XPATH,'//a[@aria-label="dismiss cookie message"]')))
@@ -400,16 +423,22 @@ class AuthorMetadata:
                     author_afi = ch_ieee.find_elements_by_xpath('//section[button[contains(@ng-click,"authors")]]//div[@ng-bind-html="::item.affiliation"]')
                     affiliation_ieee = {i.text:author_afi[author_ele.index(i)].text for i in author_ele}
                     # affiliations[page].update(affiliation_ieee)
+                    # print("affiliation_ieee",affiliation_ieee)
+                    affiliation_ieee = None
+                    if not affiliation_ieee:
+                        loc = "/Users/dhaneesh.gk/Projects/own/web_import/extract_it/pages/poc_2/author_metadata/ieee.json"
+                        affiliation_ieee = json.loads(open(loc,"r").read())
                     self.author_affiliations_details.update({page:affiliation_ieee})
                     self.save_as_csv(self.author_affiliations_details[page],page,related=related)
                     # time.sleep(200)
                 # pass
 
             if web_site == "oup":
-                print("oup")
+                # print("oup")
                 try:
                     for page in elements[web_site]:
-                        ch_oup = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                        # ch_oup = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                        ch_oup = self.chrome_driver
                         ch_oup.get(page)
                         affi_oup = {}
                         eles_oup = ch_oup.find_elements_by_xpath('//span[@class="al-author-name"]/a')
@@ -423,12 +452,13 @@ class AuthorMetadata:
                         self.author_affiliations_details.update({page:affi_oup})
                         self.save_as_csv(self.author_affiliations_details[page],page,related=related)
                 except Exception:
-                    print("Error in oup affiliations")
+                    # print("Error in oup affiliations")
+                    pass
                     
                 pass
 
             if web_site == "academicradiology":
-                print("academicradiology")
+                # print("academicradiology")
                 for page in elements[web_site]:
                     page_content = requests.get(page).content
                     self.soup = BeautifulSoup(page_content, 'html.parser')
@@ -466,7 +496,8 @@ class AuthorMetadata:
             if web_site == "oup":
                 for page in elements[web_site]:
                     # page_content = requests.get(page).content
-                    ch = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    # ch = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
+                    ch = self.chrome_driver
                     ch.get(page)
                     ch.find_element_by_xpath('//i[@class="icon-general-mail"]').click()
                     # time.sleep(2)
@@ -476,7 +507,7 @@ class AuthorMetadata:
                     # print(email_id)
                     self.author_email_details.update({page:{page:email_id}})
                     self.save_as_csv(self.author_email_details[page],page,related=related)
-                    ch.quit()
+                    # ch.quit()
 
                             
                                                                                 
@@ -490,8 +521,10 @@ class AuthorMetadata:
 
 
 if __name__ == "__main__":
-    
-    aa = AuthorMetadata()
+    chrome_path = "/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver"
+    ch = webdriver.Chrome(executable_path=chrome_path)
+
+    aa = AuthorMetadata(driver=ch)
     # print(os.path.exists("/Users/dhaneesh.gk/Projects/own/web_import/extract_it/pages/poc_2/author_metadata/url_am.py"))
     # print(aa.author_name_details)
     # print(aa.author_type_details)

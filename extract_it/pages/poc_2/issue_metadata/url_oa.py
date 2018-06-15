@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import config_oa
+# import config_oa
 import os
 
 class IssueMetadata:
@@ -73,7 +73,8 @@ class IssueMetadata:
         f = open(store_path+file_ext,"w")
         f.write(con)
         f.close()
-
+    
+        print("\nFor link  :: "+page+"\n")
 
     def wiley(self, page, related):
         lists = self.soup.findAll('div',attrs={"class":"issue-item"})
