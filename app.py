@@ -67,6 +67,7 @@ class Import_Web_To_WittyParrot:
         print("started check for facets presence")
         # print(self.case_details["Published"]["case_details"][0].keys())
         # print(self.case_details["Unpublished"]["case_details"][0].keys())
+        # self.model.update({"childs":{"Case Origin":{},"Case Type":{},"Authoring Judge":{},"Case Panel":{}}})
         self.model.update({"childs":{"Case Origin":{},"Case Type":{}}})
         for i in self.model["childs"]:
             # print(i)
@@ -190,6 +191,7 @@ class Import_Web_To_WittyParrot:
                         for x in self.model['childs'].keys():
                             if x in j:
                                 # print(self.model['childs'][i], j[i])
+                                # if j[x] and self.model['childs'][x]["childs"] and self.model['childs'][x]["childs"][j[x]]:
                                 c_j['categoryValues'].append(self.model['childs'][x]["childs"][j[x]]["details"])
                         # print(c_j)
                         w_c = self.user.create_wit(all_d=c_j)

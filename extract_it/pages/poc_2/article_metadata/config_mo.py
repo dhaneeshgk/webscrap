@@ -1,0 +1,31 @@
+elements = {"title":
+                    {
+                    "jes":"http://jes.ecsdl.org/content/134/7",
+                    "iopscience":"http://iopscience.iop.org/issue/2053-1583/4/1",
+                    "scrip":"http://www.scirp.org/journal/ojic/",
+                    "sciencedirect":"https://www.sciencedirect.com/journal/inorganic-chemistry-communications",
+                    "jsac":"http://www.jsac.or.jp/cgi-bin/xraystruct/toc/34/2/" 
+                    },
+            "sub_title":
+                    {
+                        "kunststoffe":"https://www.kunststoffe.de/en/journal/archive/article/optimized-process-control-for-injection-molding-of-thermoset-molding-compounds-3728247.html"
+                    },
+            "abstract":{
+                "ems-ph":"http://www.ems-ph.org/journals/show_abstract.php?issn=1435-9855&vol=19&iss=5&rank=3",
+                "springeropen":["https://ccj.springeropen.com/articles/10.1186/s13065-017-0268-2",
+                                "https://ccj.springeropen.com/articles/10.1186/s13065-016-0156-1"],
+                "jes":["http://jes.ecsdl.org/content/134/7/1604.short",
+                        "http://jes.ecsdl.org/content/134/7/1594.abstract"],
+                "springer":["https://link.springer.com/article/10.1007/s10910-015-0498-2"],
+                "sciencedirect":["https://www.sciencedirect.com/science/article/pii/S0022039617305260",
+                    "https://www.sciencedirect.com/science/article/pii/S0022039617304503"],
+                "aerospaceamerica":["https://aerospaceamerica.aiaa.org/departments/wanted-aircraft-carrier- in-the-sky/"]
+                
+            },
+
+            "OA_Art":{
+                "wiley":["http://onlinelibrary.wiley.com/doi/10.1111/abac.2017.53.issue-1/issuetoc"],
+                "jes":["http://jes.ecsdl.org/content/165/7.toc","http://jes.ecsdl.org/content/165/8.toc"],
+                "sciencedirect":["https://www.sciencedirect.com/science/journal/13877003/84"]
+                }
+}
