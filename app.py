@@ -5,7 +5,9 @@ from extract_it.pages.poc_1.extract_memoranda_page import Extract_Memoranda_Page
 from extract_it.pages.poc_1.extract_usc9_page import Extract_USC9_Page
 from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
 import os
-FRAME_PATH = os.getcwd().replace("/web_app","")
+FRAME_PATH = os.getcwd()
+FRAME_PATH = FRAME_PATH.replace("/web_app","")
+FRAME_PATH = FRAME_PATH.replace("/web_app","")
 import sys
 sys.path.append(FRAME_PATH+"/web_app.py")
 from imp import reload
