@@ -4,13 +4,16 @@ from extract_it.pages.poc_1.extract_opinions_page import Extract_Opinions_Page
 from extract_it.pages.poc_1.extract_memoranda_page import Extract_Memoranda_Page
 from extract_it.pages.poc_1.extract_usc9_page import Extract_USC9_Page
 from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
-import user_details as yu
+import os
+FRAME_PATH = os.getcwd().replace("/web_app","")
+import sys
+sys.path.append(FRAME_PATH+"/web_app.py")
 from imp import reload
 import json
-import os
 import requests
 import time
-FRAME_PATH = os.getcwd().replace("/web_app","")
+import user_details as yu
+
 import sys
 sys.path.append('C:/Users/wpautomation/Desktop/beautifulsoup4-4.0.1')
 
@@ -19,7 +22,11 @@ sys.path.append('C:/Users/wpautomation/Desktop/beautifulsoup4-4.0.1')
 
 class Import_Web_To_WittyParrot:
 
-    def __init__(self, url="", obj=None):
+    def __init__(self, url="", obj=None,user_details=None):
+        if user_details:
+            class yu(): 
+                user = user_details
+            # print(yu.user)
         self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
         self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
         self.folders.reverse()
@@ -42,7 +49,6 @@ class Import_Web_To_WittyParrot:
 
 
     def re_do(self):
-        reload(yu)
         self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
         self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
         self.folders.reverse()
