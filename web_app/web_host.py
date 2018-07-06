@@ -1,3 +1,3 @@
-import app
+import web_app
 
-app.app.run(host='0.0.0.0',port=5000,debug=True)
+web_app.app.run(host='0.0.0.0',port=5000,debug=True)
