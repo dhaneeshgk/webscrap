@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>AUTO REPORT</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <head>
+      <style>
+      .flashes{
+          position:absolute;
+          bottom:1%;
+          right:1%;
+          border-radius: 25px;
+          border: 2px solid #FE9A2E;
+          width: 500px;
+          height: 30px;
+          text-align: center;
+      }
+      </style>
+  </head>
+      <body>
+        <h2>Web import status</h2>
+        <div class="container">
+  		  </div>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <!-- {% for message in messages %} -->
+                <div class="flashes">
+                    {{ message[0] }}
+                </div>
+                <!-- {% endfor %} -->
+            {% endif %}
+          {% endwith %}
+      </body>
+  </html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>web import</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <head>
+      <style>
+      .flashes{
+          position:absolute;
+          bottom:1%;
+          right:1%;
+          border-radius: 25px;
+          border: 2px solid #FE9A2E;
+          width: 500px;
+          height: 30px;
+          text-align: center;
+      }
+      </style>
+  </head>
+      <body>
+        <div class="container">
+          <h1>Web Import</h1>
+          <div class="email-exists">
+          {{text | safe}}
+          </div>
+  		      <div class="form">
+              <form action="{{url_for('web_import')}}" method="GET">
+  			        <input title="Your email address will be safe with us." placeholder="Enter your email address" type="email" name="email_name" required> <br>
+  			        <input title="Your email address will be safe with us." placeholder="Enter your password" type="password" name="password" required> <br>
+                <button class="go-button" type="login"> Login </button>
+  		        </form>
+          </div>
+  		  </div>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <!-- <ul class=flashes>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+              </ul> -->
+              <div class="flashes">
+                  {{ messages[0] }}
+              </div>
+            {% endif %}
+          {% endwith %}
+      </body>
+  </html>

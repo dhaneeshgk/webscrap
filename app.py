@@ -1,8 +1,8 @@
 
-from config import *
-from extract_it.pages.extract_opinions_page import Extract_Opinions_Page
-from extract_it.pages.extract_memoranda_page import Extract_Memoranda_Page
-from extract_it.pages.extract_usc9_page import Extract_USC9_Page
+# from config import *
+from extract_it.pages.poc_1.extract_opinions_page import Extract_Opinions_Page
+from extract_it.pages.poc_1.extract_memoranda_page import Extract_Memoranda_Page
+from extract_it.pages.poc_1.extract_usc9_page import Extract_USC9_Page
 from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
 import user_details as yu
 from imp import reload
@@ -10,11 +10,12 @@ import json
 import os
 import requests
 import time
+FRAME_PATH = os.getcwd()
 
 
 class Import_Web_To_WittyParrot:
 
-    def __init__(self, url=""):
+    def __init__(self, url="", obj=None):
         self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
         self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
         self.folders.reverse()
@@ -24,6 +25,17 @@ class Import_Web_To_WittyParrot:
         self.wits_s_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/"+yu.user["user_id"].split("@")[0]+"_wits_status.json"
         self.attachments_s_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/"+yu.user["user_id"].split("@")[0]+"_attachments_status.json"
         self.attach_f_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/files/"
+        self.logJson = []
+        self.obj = obj
+
+    def log_json(self,message):
+        f_p = os.getcwd()+"/web_app/import_status/status.json"
+        # con = []
+        self.obj(message)
+        # if os.path.exists(f_p):
+        #     con = json.loads(open(f_p,"r").read())
+        # con.append(message)
+
 
     def re_do(self):
         reload(yu)
@@ -41,6 +53,7 @@ class Import_Web_To_WittyParrot:
         else:
             self.model.update({"name":yu.user["model"],"id":models[yu.user["model"]]})
             print("completed for models presence check")
+            self.log_json("Completed for models presence check")
             return {"status":True}
 
     def extract_web_data(self):
@@ -60,6 +73,7 @@ class Import_Web_To_WittyParrot:
                 upu = Extract_Memoranda_Page(n_url)
                 upu_case_details = upu.get_case_details()
                 self.case_details.update({i:{"case_details":upu_case_details,"headers":upu.get_case_metadata()}})
+            self.log_json("Completed for extract_web_data of '{0}'".format(i))
             print("completed for extract_web_data of '{0}'".format(i))
         return self.case_details
 
@@ -82,6 +96,7 @@ class Import_Web_To_WittyParrot:
             else:
                 details = self.user.create_facet(name=i,parentId=self.model["id"])
                 self.model["childs"][i].update({"name":i,"id":details["id"],"details":details,"childs":{}})  
+        self.log_json("Completed check for facets presence")
         print("completed check for facets presence")
         return self.model
 
@@ -109,6 +124,7 @@ class Import_Web_To_WittyParrot:
                             else:
                                 val = self.user.create_facet_value(name=i[j], parentId=self.model["childs"][j]["id"])
                                 self.model["childs"][j]["childs"].update({i[j]:{"id":val["id"],"details":val}})  
+        self.log_json("Completed check for facets values presence")
         print("completed check for facet_values_presence")
         return self.model                               
 
@@ -140,6 +156,7 @@ class Import_Web_To_WittyParrot:
             else:
                 self.folder_c.update({i:f_st[i]})            
         print("completed check for folder_presense")
+        self.log_json("Completed check for folders presence")
 
     def check_wits_presence(self):
 
@@ -197,8 +214,9 @@ class Import_Web_To_WittyParrot:
                         w_c = self.user.create_wit(all_d=c_j)
                         self.status(wits={w_c["name"]:w_c["id"]})
                         print('Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title']))
-                        time.sleep(5)
+                        time.sleep(2)
             print('Completed creation of wit for "{0}"'.format(i))
+            self.log_json('Completed creation of wit for "{0}"'.format(i))
 
     def status(self,folders=None,wits=None,attachments=None,read=False):
 
@@ -258,13 +276,14 @@ class Import_Web_To_WittyParrot:
 
 
 if __name__ == "__main__":
-    cd = Import_Web_To_WittyParrot()
-    cd.check_models_present()
-    cd.extract_web_data()
-    cd.check_facets_presence()
-    cd.check_facet_values_presence()
-    cd.check_folder_presense()
-    cd.check_wits_presence()
+    # cd = Import_Web_To_WittyParrot()
+    # cd.check_models_present()
+    # cd.extract_web_data()
+    # cd.check_facets_presence()
+    # cd.check_facet_values_presence()
+    # cd.check_folder_presense()
+    # cd.check_wits_presence()
+    # print(os.getcwd())
     pass
 
 

@@ -16,7 +16,7 @@ class ArticleMetadata:
         if not elements:elements = config_mo.elements
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/ArticleMetadata/"
-        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
+        print("\nYou can find the extracted contents for Article Metadata at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.art_titels = {}
@@ -28,46 +28,71 @@ class ArticleMetadata:
             if i=="title":
                 print("\nStarted for Article Title extraction\n")
                 self.article_title(elements[i], i)
-                print("\nCompleted extraction for Title of Articles ID\n\n")
+                print("\nCompleted extraction for Title of Articles\n\n")
                 pass
             elif i == "sub_title":
                 print("\nStarted for Article Sub Title extraction\n")
                 self.article_sub_title(elements[i], i)
-                print("\nCompleted extraction for Abstract of Articles ID\n\n")
+                print("\nCompleted extraction for Sub Title of Articles\n\n")
                 pass
             elif i == "abstract":
                 print("\nStarted for Article Abstract extraction\n")
                 self.abstract_text(elements[i], i)
-                print("\nCompleted extraction for Abstract of Articles ID\n\n")
+                print("\nCompleted extraction for Abstract of Articles\n\n")
                 pass
             elif i == "OA_Art":
                 print("\nStarted for OA or not details of Articles extraction\n")
                 self.oa_art(elements[i], i)
-                print("\nCompleted extraction for OA or not details of Articles ID\n\n")
+                print("\nCompleted extraction for OA or not details of Articles\n\n")
                 pass
 
-    def save_as_csv(self,objects,page,related=None,page_id=None):
+    def save_as_csv(self,objects,page,related=None,page_id=None, other=False):
         store_path = ""
         tsv = False
         html = False
         if related == "title":
-            con = "title"
-            for i in objects:
-                con= con + "\n" + i
-            if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
-            # print(page)
-            store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
-            # print(store_path)
-        
+            if not other:
+                con = "title"
+                for i in objects:
+                    con= con + "\n" + i
+                if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
+                # print(page)
+                store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
+                # print(store_path)
+                tsv = True
+            else:
+                con = '<html><body><div><h1>Titles</h1><a href="{0}" target="_blank">extracted from</a><div><div>{1}</div></body></html>'
+                titles = ""
+                for i in objects:
+                    print(i)
+                    titles =  titles +"<div><label>Title<label><div>{0}<div><div>".format(i).replace('src="','src="http://jes.ecsdl.org')
+
+                con = con.format(page,titles)
+                
+                if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
+                # print(page)
+                store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
+                html = True
 
         if related == "sub_title":
-            con = "sub_title"
-            for i in objects:
-                con= con + "\n" + i
-            if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
-            # print(page)
-            store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
-            # print(store_path)
+            if not other:
+                con = "sub_title"
+                for i in objects:
+                    con= con + "\n" + i
+                if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
+                # print(page)
+                store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
+                # print(store_path)
+            else:
+                con = '<html><body><div><h1 href="{0}">extracted from</h1><div><div><ul>{1}<ul></div></body></html>'
+                sub_titles = ""
+                for i in objects:
+                    sub_titles =  sub_titles +"<li><div>{0}<div><li>".format(i)
+                con = con.format(page,sub_titles)
+                if not os.path.exists(self.store_extract+related):os.mkdir(self.store_extract+related)
+                # print(page)
+                store_path = self.store_extract+related+"/"+page.split("//")[1].split("/")[0].replace(".","_")
+                html = True               
 
         if related == "abstract":
             con = objects
@@ -108,7 +133,7 @@ class ArticleMetadata:
         f.write(con)
         f.close()        
 
-        print("\nFor link  :: "+page+"\n")
+        print("\nImport Completed For link  :: "+page+"\n")
 
     def article_title(self,pages, related):
 
@@ -121,6 +146,7 @@ class ArticleMetadata:
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 lists = [i for i in self.soup.find("form", attrs={"action":"/gca"}).findAll("div") if i.attrs["class"].count("toc-level")>0]
                 titles_jes = []
+                titles_jes_html = []
                 for i in lists:
                     data_extracted = {}
 
@@ -134,7 +160,8 @@ class ArticleMetadata:
                                 data_extracted[i.find("h2").text].update({q.find("h3").text:[]})
                                 for l in q.findAll("h4",attrs={"class","cit-title-group"}):
                                     data_extracted[i.find("h2").text][q.find("h3").text].append(l.text.strip().replace("\n",""))
-                                titles_jes.append(l.text.strip().replace("\n",""))
+                                    titles_jes.append(l.text.strip().replace("\n",""))
+                                    titles_jes_html.append(l)
                     else:
                         # print("in h2 jes")
                         if i.find("h2"): 
@@ -142,9 +169,11 @@ class ArticleMetadata:
                             for l in i.findAll("h4",attrs={"class","cit-title-group"}):
                                 data_extracted[i.find("h2").text].append(l.text.strip().replace("\n",""))
                                 titles_jes.append(l.text.strip().replace("\n",""))
+                                titles_jes_html.append(l)
                     # data.update(data_extracted)
                 # print(data)
                 self.save_as_csv(titles_jes, pages[page_id],related)
+                self.save_as_csv(titles_jes_html, pages[page_id],related, other=True)
                 # print(titles_jes)
                 # print("end of jes")
 
@@ -154,6 +183,7 @@ class ArticleMetadata:
                 page_content = requests.get(pages[page_id]).content
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 lists_article_title = [i.text.strip() for i in self.soup.findAll("a",attrs={"class","art-list-item-title"})]
+                lists_article_title_html = [i for i in self.soup.findAll("a",attrs={"class","art-list-item-title"})]
                 # lists_authors = [i.text.strip() for i in self.soup.findAll("p",attrs={"class","small art-list-item-meta"})] 
                 # abstract_text = [i.find("p").text for i in self.soup.findAll("div",attrs={"class","article-text wd-jnl-art-abstract cf"})]
                 # pdfs_link = [i.findAll("a")[2].attrs["href"] for i in self.soup.findAll("div",attrs={"class","art-list-item-tools small"}) if i.findAll("a",attrs={"class","mr-2 nowrap"}) ]
@@ -166,16 +196,19 @@ class ArticleMetadata:
                 # print(oa_or_not)
                 # print(lists_article_title)
                 self.save_as_csv(lists_article_title, pages[page_id],related)
+                self.save_as_csv(lists_article_title_html, pages[page_id],related, other=True)
                 # print("end of iopscience")
 
             elif page_id=="scrip":
                 # driver_scrip = webdriver.Chrome(executable_path="/Users/dhaneesh.gk/Projects/own/web_import/extract_it/drivers/chromedriver")
                 driver_scrip = self.chrome_driver
                 driver_scrip.get(pages[page_id])
-                time.sleep(10)
+                time.sleep(5)
                 driver_scrip.refresh()
+                WebDriverWait(driver_scrip, 20).until(EC.presence_of_elements_located((By.XPATH,"//ul[div[contains(@id,'JournalInfor_Repeater_Papers')]]/p/a[@name]", "DOM content are not accessible right now")))
                 article_titles_scrip =[i.text.strip() for i in driver_scrip.find_elements_by_xpath("//ul[div[contains(@id,'JournalInfor_Repeater_Papers')]]/p/a[@name]")]
-                # print(article_titles_scrip)
+                if not article_titles_scrip:
+                    article_titles_scrip.append("Titels are not accessible from website right now")
                 self.save_as_csv(article_titles_scrip, pages[page_id],related)
             
             elif page_id=="sciencedirect":
@@ -183,13 +216,16 @@ class ArticleMetadata:
                 page_content = requests.get(pages[page_id]).content
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 article_titels = []
+                article_titles_html = []
                 for i in self.soup.findAll("h3", attrs={"class","text-m u-display-inline"}):
                     for j in i.findAll("span"):
                         if j.attrs:
                             if article_titels.count(j.text)==0:
                                 article_titels.append(j.text)
+                                article_titles_html.append(j)
                 # print(article_titels)
                 self.save_as_csv(article_titels, pages[page_id],related)
+                self.save_as_csv(article_titles_html, pages[page_id],related, other=True)
                             
             elif page_id=="jsac":
                 pass
@@ -197,18 +233,22 @@ class ArticleMetadata:
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 articles = []
                 article_titels = []
+                article_titles_html = []
                 for i in self.soup.findAll("div",attrs={"class","article"}):
                     data_extracted = {}
                     title = i.find("div",attrs={"class","title"}).text
+                    title_html = i.find("div",attrs={"class","title"})
                     authors = i.find("div",attrs={"class","author"}).text
                     journal = i.find("div",attrs={"class","journal"}).text
                     links = {j.text:"http://www.jsac.or.jp"+j.attrs["href"] for j in i.findAll("a") if "href" in j.attrs}
                     image = "http://www.jsac.or.jp"+i.find("img").attrs["src"]
                     data_extracted.update({"title":title,"authors":authors,"journal":journal,"links":links,"image":image})
                     article_titels.append(title)
+                    article_titles_html.append(title_html)
                     articles.append(data_extracted)
                 # print(article_titels)
                 self.save_as_csv(article_titels, pages[page_id],related)
+                self.save_as_csv(article_titles_html, pages[page_id],related, other=True)
             
 
     def article_sub_title(self,pages, related):
@@ -220,12 +260,14 @@ class ArticleMetadata:
                 self.soup = BeautifulSoup(page_content, 'html.parser')
                 # title = self.soup.find("h1").text
                 sub_title = self.soup.findAll("h2")[0].text
+                sub_title_html = self.soup.findAll("h2")[0]
                 # pdf_link = "https://www.kunststoffe.de/"+self.soup.find("h5").find("a").attrs["href"]
                 # article_info = self.soup.find("p",attrs={"class","article-intro"}).text
                 # author = self.soup.find("p",attrs={"class","author"}).text
 
                 self.art_subtitle.update({pages[page_id]:sub_title})
                 self.save_as_csv([sub_title], pages[page_id],related)
+                self.save_as_csv([sub_title_html], pages[page_id],related, other=True)
                 # print(title)
                 # print(sub_title)
                 # print(pdf_link)

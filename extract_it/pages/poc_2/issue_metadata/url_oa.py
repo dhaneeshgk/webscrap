@@ -9,7 +9,7 @@ class IssueMetadata:
         if not pages:pages = config_oa.pages
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/IssueMetadata/"
-        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
+        print("\nYou can find the extracted contents for Issue metadata at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.data = {}
@@ -75,7 +75,7 @@ class IssueMetadata:
         f.write(con)
         f.close()
     
-        print("\nFor link  :: "+page+"\n")
+        print("\nImport Completed For link  :: "+page+"\n")
 
     def wiley(self, page, related):
         lists = self.soup.findAll('div',attrs={"class":"issue-item"})

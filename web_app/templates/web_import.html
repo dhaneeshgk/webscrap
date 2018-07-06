@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>web import</title>
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+  <head>
+      <style>
+      .flashes{
+          position:absolute;
+          bottom:1%;
+          right:1%;
+          border-radius: 25px;
+          border: 2px solid #FE9A2E;
+          width: 500px;
+          height: 30px;
+          text-align: center;
+      }
+      </style>
+  </head>
+      <body>
+        <div class="container">
+  		      <div class="form">
+              <form action="{{url_for('web_import')}}" method="POST">
+                  <!-- <label for="URL">URL</label> -->
+                  <input class="info_input"title="Import web content from link" placeholder="Enter Link" type="text" name="url" required></br>
+                  <!-- <label for="Identifiers">Identifiers</label> -->
+                  <input class="info_input" title="Content Identifiers" placeholder="Enter Identifiers" type="text" name="identifiers" required></br>
+                <button class="go-button" type="submit"> Import content </button>
+  		        </form>
+          </div>
+  		  </div>
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <!-- <ul class=flashes>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+              </ul> -->
+              <div class="flashes">
+                  {{ messages[0] }}
+              </div>
+            {% endif %}
+          {% endwith %}
+      </body>
+  </html>

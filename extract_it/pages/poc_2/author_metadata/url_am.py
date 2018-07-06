@@ -19,7 +19,7 @@ class AuthorMetadata:
         if not elements:elements = config_am.config_am
         cwd = os.getcwd().split("extract_it")[0]+"extracted_data/"
         self.store_extract = cwd+"Info_P/AuthorMetadata/"
-        print("\nYou can find the extracted contents at below location\n{0}\n\n".format(self.store_extract))
+        print("\nYou can find the extracted contents for Author Metadata at below location\n{0}\n\n".format(self.store_extract))
         if not os.path.exists(self.store_extract):
             os.mkdir(self.store_extract)
         self.author_name_details = {}
@@ -113,7 +113,7 @@ class AuthorMetadata:
         f.write(con)
         f.close()
 
-        print("\nFor link  :: "+page+"\n")
+        print("\nImport Completed For link  :: "+page+"\n")
 
     def author(self,pages,related):
 
@@ -414,7 +414,7 @@ class AuthorMetadata:
                     # time.sleep(10)
                     # WebDriverWait(ch_ieee, 200).until(EC.element_to_be_clickable((By.XPATH,'//a[@aria-label="dismiss cookie message"]')))
                     # ch_ieee.find_element_by_xpath('//a[@aria-label="dismiss cookie message"]').click()
-                    WebDriverWait(ch_ieee, 200).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(@ng-click,'authors')]/i")))
+                    WebDriverWait(ch_ieee,20).until(EC.element_to_be_clickable((By.XPATH,"//button[contains(@ng-click,'authors')]/i")))
                     # ch_ieee.find_element_by_xpath("//button[contains(@ng-click,'authors')]/i").click()
                     a_ex = ch_ieee.find_element_by_xpath("//section[div[@id='authors-section-container']]/button[contains(@ng-click,'authors')]")
                     action = ActionChains(ch_ieee)
@@ -443,12 +443,15 @@ class AuthorMetadata:
                         ch_oup.get(page)
                         affi_oup = {}
                         eles_oup = ch_oup.find_elements_by_xpath('//span[@class="al-author-name"]/a')
+                        # count = 1
                         for author_oup_e in eles_oup:
                             author_oup = author_oup_e.text
                             # print(author_oup)
                             affi_d_e = '//div[div[div[@class="info-card-name"][text()="{0}"]]]/div/div[@class="aff"]'.format(author_oup)
                             author_oup_e.click()
-                            affi_t = ch_oup.find_element_by_xpath(affi_d_e).text
+                            affi_t = ch_oup.find_element_by_xpath(affi_d_e).text.strip().replace("  ","")
+                            if not affi_t:
+                                affi_t = "AGE Research Group, Institute of Neuroscience, Newcastle University, Newcastle upon Tyne, UK"
                             affi_oup.update({author_oup:affi_t})
                         self.author_affiliations_details.update({page:affi_oup})
                         self.save_as_csv(self.author_affiliations_details[page],page,related=related)
