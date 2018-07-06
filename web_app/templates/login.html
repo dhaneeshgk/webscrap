@@ -24,7 +24,7 @@
           {{text | safe}}
           </div>
   		      <div class="form">
-              <form action="{{url_for('web_import')}}" method="PUT">
+              <form action="{{url_for('web_import')}}" method="POST">
   			        <input title="Your email address will be safe with us." placeholder="Enter your email address" type="email" name="email_name" required> <br>
   			        <input title="Your email address will be safe with us." placeholder="Enter your password" type="password" name="password" required> <br>
                 <button class="go-button" type="login"> Login </button>

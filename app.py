@@ -7,7 +7,8 @@ from wittyparrot_sdk.wittyparrot_apis import WittyParrot_Apis
 import os
 FRAME_PATH = os.getcwd()
 FRAME_PATH = FRAME_PATH.replace("/web_app","")
-FRAME_PATH = FRAME_PATH.replace("/web_app","")
+FRAME_PATH = FRAME_PATH.replace("\\web_app","")
+print(FRAME_PATH)
 import sys
 sys.path.append(FRAME_PATH+"/web_app.py")
 from imp import reload
@@ -15,6 +16,9 @@ import json
 import requests
 import time
 import user_details as yu
+import threading
+import shutil
+from datetime import datetime
 
 import sys
 sys.path.append('C:/Users/wpautomation/Desktop/beautifulsoup4-4.0.1')
@@ -24,11 +28,14 @@ sys.path.append('C:/Users/wpautomation/Desktop/beautifulsoup4-4.0.1')
 
 class Import_Web_To_WittyParrot:
 
+    req_status = False
+
     def __init__(self, url="", obj=None,user_details=None):
         if user_details:
             class yu(): 
                 user = user_details
             # print(yu.user)
+        self.obj = obj
         self.user = WittyParrot_Apis(username=yu.user["user_id"],password=yu.user["password"],env=yu.user["env"])
         self.folders = [i.upper() for i in yu.user['url'].split("/")[2].split(".") if not i in ["www"]]
         self.folders.reverse()
@@ -38,16 +45,21 @@ class Import_Web_To_WittyParrot:
         self.wits_s_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/"+yu.user["user_id"].split("@")[0]+"_wits_status.json"
         self.attachments_s_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/"+yu.user["user_id"].split("@")[0]+"_attachments_status.json"
         self.attach_f_p = FRAME_PATH+"/wittyparrot_sdk/data_storage/files/"
+        if not os.path.exists(self.attach_f_p):os.mkdir(self.attach_f_p) 
         self.logJson = []
-        self.obj = obj
+        self.log_json("Web import under request don't submit until request is done")
+
 
     def log_json(self,message):
-        f_p = os.getcwd()+"/web_app/import_status/status.json"
-        con = []
+        f_p = os.getcwd()+"/import_status/status.json"
+        con = {}
         self.obj(message)
         if os.path.exists(f_p):
             con = json.loads(open(f_p,"r").read())
-        con.append(message)
+        con.update({str(datetime.now()).split(".")[0]:message})
+        f_w = open(f_p,"w")
+        f_w.write(json.dumps(con))
+        f_w.close()
 
 
     def re_do(self):
@@ -280,7 +292,20 @@ class Import_Web_To_WittyParrot:
             f_s_f.close()
 
             
-            
+    def main(self):
+        # im = Import_Web_To_WittyParrot(obj=flash)
+        self.check_models_present()
+        self.extract_web_data()
+        self.check_facets_presence()
+        self.check_facet_values_presence()
+        self.check_folder_presense()
+        self.check_wits_presence()
+        dir_f = FRAME_PATH+'/wittyparrot_sdk/data_storage/'
+        if os.path.exists(dir_f+"files"):shutil.rmtree(dir_f+"files")
+        if os.path.exists(dir_f+"demo_attachments_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
+        if os.path.exists(dir_f+"demo_folder_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
+        if os.path.exists(dir_f+"demo_wits_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
+        Import_Web_To_WittyParrot.req_status=False
 
 
 

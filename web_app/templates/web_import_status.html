@@ -1,33 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <title>AUTO REPORT</title>
+  <title>Web Import</title>
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
   <head>
       <style>
-      .flashes{
-          position:absolute;
-          bottom:1%;
-          right:1%;
-          border-radius: 25px;
-          border: 2px solid #FE9A2E;
-          width: 500px;
-          height: 30px;
-          text-align: center;
+            .rdb {
+                position:absolute;
+                left:5%;
+                top:5%;
+                border-radius: 25px;
+                border: 2px solid #FE9A2E;
+                padding: 10px;
+                width: 100px;
+                height: 40px;
+                text-align: center;
+                justify-content: flex-start;
+                font-variant-caps: small-caps;
+                font-weight: bold;
+            }
+            .rdl {
+                position:absolute;
+                right:5%;
+                top:5%;
+                border-radius: 25px;
+                border: 2px solid #FE9A2E;
+                padding: 10px;
+                width: 100px;
+                height: 40px;
+                text-align: center;
+                justify-content: flex-start;
+                font-variant-caps: small-caps;
+                font-weight: bold;
+            }
+        
+      .status_messages{
+          color: black;
+          text-align:left;
+          left:50%; 
+          text-indent: 10%;
+          font-variant: small-caps;
+          font-weight: bold;
+      }
+      .message_list{
+          left:20%;
+          right:20%;
+          text-align: left;
       }
       </style>
   </head>
       <body>
-        <h2>Web import status</h2>
         <div class="container">
-  		  </div>
-          {% with messages = get_flashed_messages() %}
-            {% if messages %}
-              <!-- {% for message in messages %} -->
-                <div class="flashes">
-                    {{ message[0] }}
-                </div>
-                <!-- {% endfor %} -->
-            {% endif %}
-          {% endwith %}
+        <form action="{{url_for('web_import')}}" method="GET">
+                <button class="rdb" type="submit">import content</button>
+            </form>
+            <form action="{{url_for('logout')}}" method="POST">
+                <button class="rdl" type="submit">logout</button>
+            </form>
+        <h2>Web import status logs</h2>
+        <!-- {% if messages %} -->
+        <div class="message-list">
+          {% for message in messages %}
+                <div class="status_messages">{{ message }} : {{messages[message]}}</div>
+          {% endfor %}
+        </div>
+        <!-- {% endif %} -->
+        </div>
       </body>
   </html>

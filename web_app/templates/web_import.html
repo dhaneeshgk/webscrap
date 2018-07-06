@@ -4,6 +4,32 @@
   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
   <head>
       <style>
+        .rdb {
+                position:absolute;
+                left:5%;
+                top:5%;
+                border-radius: 25px;
+                border: 2px solid #FE9A2E;
+                padding: 10px;
+                width: 100px;
+                height: 40px;
+                text-align: center;
+                font-variant-caps: small-caps;
+                font-weight: bold;
+            }
+            .rdl {
+                position:absolute;
+                right:5%;
+                top:5%;
+                border-radius: 25px;
+                border: 2px solid #FE9A2E;
+                padding: 10px;
+                width: 100px;
+                height: 40px;
+                text-align: center;
+                font-variant-caps: small-caps;
+                font-weight: bold;
+            }
       .flashes{
           position:absolute;
           bottom:1%;
@@ -13,20 +39,39 @@
           width: 500px;
           height: 30px;
           text-align: center;
+          font-variant-caps: small-caps;
+      }
+      .info{
+        font-weight: bold;
+        font-variant-caps: titling-caps;
+        color: #B40431;
       }
       </style>
   </head>
       <body>
         <div class="container">
+            <form action="{{url_for('web_import_status')}}" method="GET">
+                    <button class="rdb" type="submit">import status</button>
+                </form>
+            <form action="{{url_for('logout')}}" method="POST">
+                <button class="rdl" type="submit">logout</button>
+            </form>
   		      <div class="form">
-              <form action="{{url_for('web_import')}}" method="POST">
+              <form action="{{url_for('web_import_status')}}" method="POST">
                   <!-- <label for="URL">URL</label> -->
+                  <input class="info_input"title="Wittyparrot id of user to be imported" placeholder="WittyParrot Id" type="email" name="email_name" required></br>
+                  <input class="info_input"title="WittyParrot Password" placeholder="Enter Link" type="password" name="WittyParrot Account Password" required></br>
                   <input class="info_input"title="Import web content from link" placeholder="Enter Link" type="text" name="url" required></br>
                   <!-- <label for="Identifiers">Identifiers</label> -->
                   <input class="info_input" title="Content Identifiers" placeholder="Enter Identifiers in comma separation" type="text" name="identifiers" required></br>
                   <input class="info_input" title="Work Space" placeholder="Enter Workspace Name" type="text" name="workspace" required></br>
                   <input class="info_input" title="Facets" placeholder="Enter Facets Name" type="text" name="facet_name" required></br>
-                <button class="go-button" type="submit"> Import content </button>
+                {% if status %}
+                     <button class="go-button" type="submit" disabled> Import content </button>
+                     <div class="info">We are processing a request , you can submit for request once the request is done</div>
+                {% elif not status %}
+                    <button class="go-button" type="submit"> Import content </button>
+                {% endif %}
   		        </form>
           </div>
   		  </div>
