@@ -10,7 +10,11 @@ import json
 import os
 import requests
 import time
-FRAME_PATH = os.getcwd()
+FRAME_PATH = os.getcwd().replace("/web_app","")
+import sys
+sys.path.append('C:/Users/wpautomation/Desktop/beautifulsoup4-4.0.1')
+
+# print(FRAME_PATH)
 
 
 class Import_Web_To_WittyParrot:
@@ -30,11 +34,11 @@ class Import_Web_To_WittyParrot:
 
     def log_json(self,message):
         f_p = os.getcwd()+"/web_app/import_status/status.json"
-        # con = []
+        con = []
         self.obj(message)
-        # if os.path.exists(f_p):
-        #     con = json.loads(open(f_p,"r").read())
-        # con.append(message)
+        if os.path.exists(f_p):
+            con = json.loads(open(f_p,"r").read())
+        con.append(message)
 
 
     def re_do(self):
