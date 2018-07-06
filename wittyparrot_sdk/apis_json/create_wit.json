@@ -1,0 +1,23 @@
+{
+    "id": null,
+    "name": "hey",
+    "content": "",
+    "attachmentDetails": [
+      
+    ],
+    "comboWit": null,
+    "desc": "",
+    "source": "WITTYPARROT",
+    "parentId": null,
+    "expiryDate": "",
+    "firstAlert": "",
+    "secondAlert": "",
+    "locale": "en_US",
+    "loggedInUserPermission": {
+      "owner": true
+    },
+    "witType": "ORDINARY",
+    "categoryValues": [
+  
+    ]
+  }

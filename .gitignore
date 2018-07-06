@@ -1,4 +1,4 @@
-wittyparrot_sdk/
 miscellaneous/
 *.pyc
 extracted_data/
+*.pdf
