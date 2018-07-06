@@ -35,11 +35,6 @@ class  WittyParrot_Apis:
         self.user_path = FRAME_PATH+'/wittyparrot_sdk/data_storage/dbs/{0}'.format(self.userId)
         self.frame_path = FRAME_PATH+'/wittyparrot_sdk/data_storage/'
 
-        dir_f = FRAME_PATH+'/wittyparrot_sdk/data_storage/'
-        if os.path.exists(dir_f+"files"):shutil.rmtree(dir_f+"files")
-        if os.path.exists(dir_f+"demo_attachments_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
-        if os.path.exists(dir_f+"demo_folder_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
-        if os.path.exists(dir_f+"demo_wits_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
         
         self.wits = []
         self.workspaces = {}

@@ -18,12 +18,13 @@
   </head>
       <body>
         <div class="container">
+            <img src="https://qawittyparrotcloud.blob.core.windows.net/qawpimagescontainer/14d01a4c-80e2-4cce-8e1c-88f063ffd9a0.png"</img>
           <h1>Web Import</h1>
           <div class="email-exists">
           {{text | safe}}
           </div>
   		      <div class="form">
-              <form action="{{url_for('web_import')}}" method="GET">
+              <form action="{{url_for('web_import')}}" method="PUT">
   			        <input title="Your email address will be safe with us." placeholder="Enter your email address" type="email" name="email_name" required> <br>
   			        <input title="Your email address will be safe with us." placeholder="Enter your password" type="password" name="password" required> <br>
                 <button class="go-button" type="login"> Login </button>
