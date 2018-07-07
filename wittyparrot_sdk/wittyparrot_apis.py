@@ -31,6 +31,7 @@ class  WittyParrot_Apis:
         self.login_response = None
         self.uploaded_images = {}
         self.uploaded_attachments = {}
+        self.u_status = False
                     
         self.user_path = FRAME_PATH+'/wittyparrot_sdk/data_storage/dbs/{0}'.format(self.userId)
         self.frame_path = FRAME_PATH+'/wittyparrot_sdk/data_storage/'
@@ -45,25 +46,29 @@ class  WittyParrot_Apis:
         for i in [self.user_path,self.user_path+"/docs",self.user_path+"/images"]:
             if not os.path.exists(i):
                 os.makedirs(i)
-                
-        
+
         if not Authorization:
             
 #             print(self.login())
             if not self.login():
                 print("Error with login credentials")
-#                 raise "Error with login credentials"
+                # raise "Error with login credentials"
+                self.u_status = False
+            else:
+                self.u_status = True
+                self.enterpriseId = self.login_response['userProfile']['enterpriseId']
             
-            self.enterpriseId = self.login_response['userProfile']['enterpriseId']
-        
         else:
             
             if not self.validate_user_auth(Authorization):
-                raise "Error Validaing user authentication"
-            
+                # raise "Error Validaing user authentication"
+                self.u_status = False
+            else:
+                self.u_status = True
             self.enterpriseId = self.login_response['userProfile']['enterpriseId']
         
-        
+    def user_status(self):
+        return self.u_status
 
     def url(self):
         
@@ -80,7 +85,7 @@ class  WittyParrot_Apis:
         headers = {'Content-Type':'application/json'}
         
         data = {"userId":self.userId,"password":self.password}
-        
+        # print(self.Url+r_url)
         res = requests.post(url=self.Url+r_url,headers=headers,data=json.dumps(data))
         
         if res.status_code==200:
@@ -90,11 +95,11 @@ class  WittyParrot_Apis:
             self.Authorization.update({'Authorization':res_j["accessToken"]["tokenType"]+" "+res_j["accessToken"]["tokenValue"]})
             
             self.login_response = res_j
-            
+            # print("res_j",res_j)
             return res_j
         
         else:
-#             print(res.content)
+            print(res.content)
             return False
         
         
@@ -583,7 +588,7 @@ class  WittyParrot_Apis:
         
 #         print(res.status_code)
         if not res.status_code == 200:
-#             print(res.content)
+            # print(res.content)
             raise "error in getting models list"
         else:
             return json.loads(res.content.decode('utf-8'))         

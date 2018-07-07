@@ -7,10 +7,26 @@
                             padding:15px;
                             overflow-y: scroll
                         }
+                        .rdl {
+                position:absolute;
+                right:5%;
+                top:5%;
+                border-radius: 25px;
+                border: 2px solid #FE9A2E;
+                padding: 10px;
+                width: 100px;
+                height: 40px;
+                text-align: center;
+                font-variant-caps: small-caps;
+                font-weight: bold;
+            }
                     </style>
         </head>
     <body>
     <div id="scroll-box" class="message-list">
+    <form action="{{url_for('log_messages')}}" method="GET">
+            <button class="rdl" type="submit">REFRESH</button>
+        </form>
     {% for message in messages %}
             <div class="status_messages">{{ message.time }} : {{ message.message }}</div>
             <br>

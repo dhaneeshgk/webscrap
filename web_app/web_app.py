@@ -56,7 +56,7 @@ def login():
 
 @app.route('/login')
 def re_login():
-    return render_template("login.html",text="Invalid Credentials")
+    return make_response(render_template('login.html',text="logged out successfully"))
 
 
 @app.route('/web_import',methods=['GET','POST','PUT'])
@@ -67,6 +67,9 @@ def web_import():
             resp = make_response(render_template('web_import.html',status=Import_Web_To_WittyParrot.req_status))
             resp.set_cookie(list(con.keys())[0],list(con.values())[0])
             return resp
+        else:
+            flash("Invalid Credentials")
+            return redirect(url_for('re_login'))
     elif request.method == 'GET':
         status = validate_auth(request)
         if status:
@@ -82,20 +85,30 @@ def web_import_status():
         if request.method == "POST":
             try:
                 # print("web_import_status")
+                # print(request.form)
                 folders = [i for i in request.form['folder'].split(",")]
                 workspace = request.form["workspace"]
                 facet_name = request.form["facet_name"]
                 user_detail.update({"folders":folders})
                 user_detail.update({"user_id":request.form['email_name'],"password":request.form['password']})
                 user_detail.update({"workspace":workspace,"model":facet_name})
+                print(user_detail)
+                # print("before")
                 cd = Import_Web_To_WittyParrot(obj=fl,user_details=user_detail)
-                thread = threading.Thread(target=cd.main, name="web import")
-                thread.start()
-                Import_Web_To_WittyParrot.req_status = True
-                # print("in thread")
-                return render_template('web_import_status.html')
+                print("cd.user_status()",cd.user_status())
+                if cd.user_status():
+                    thread = threading.Thread(target=cd.main, name="web import")
+                    thread.start()
+                    Import_Web_To_WittyParrot.req_status = True
+                    # print("in thread")
+                    return render_template('web_import_status.html')
+                else:
+                    flash("please check the details entered and provide request")
+                    return render_template('web_import.html')
             except Exception as e:
                 print(e)
+                flash(str(e))
+                return render_template('web_import.html')
         if request.method == "GET":
             status_p = FRAME_PATH+"/import_status/status.json"
             if os.path.exists(status_p):

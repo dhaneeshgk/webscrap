@@ -62,6 +62,8 @@ input{
   margin: 3px;
   font-size:20px;
   font-family:Georgia, 'Times New Roman', Times, serif; 
+  font-variant-caps: small-caps;
+  font-weight: bold;
 }
 
 .container p {
@@ -70,6 +72,5 @@ input{
 }
 
 .email-exists {
-  color: #F5ECCE;
-  transition: all 0.2s ease-in-out;
+  color:#DF0101;
 }
