@@ -40,30 +40,31 @@
           text-indent: 10%;
           font-variant: small-caps;
           font-weight: bold;
+
       }
       .message_list{
           left:20%;
           right:20%;
           text-align: left;
+          width:1000rem;
+          height: 900rem;
+      }
+      #ifr{
+        border: 2px solid #FE9A2E;
       }
       </style>
   </head>
       <body>
         <div class="container">
         <form action="{{url_for('web_import')}}" method="GET">
-                <button class="rdb" type="submit">import content</button>
+                <button class="rdb" type="submit">back</button>
             </form>
             <form action="{{url_for('logout')}}" method="POST">
                 <button class="rdl" type="submit">logout</button>
             </form>
-        <h2>Web import status logs</h2>
-        <!-- {% if messages %} -->
-        <div class="message-list">
-          {% for message in messages %}
-                <div class="status_messages">{{ message }} : {{messages[message]}}</div>
-          {% endfor %}
-        </div>
-        <!-- {% endif %} -->
+        <h2>Web import status log</h2>
+        <iframe id="ifr" height="560rem" width="1100rem" src="{{url_for('log_messages')}}" scrolling="auto">
+        </iframe>
         </div>
       </body>
   </html>

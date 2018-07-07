@@ -51,12 +51,13 @@ class Import_Web_To_WittyParrot:
 
 
     def log_json(self,message):
+        self.f_p = os.getcwd()+"/import_status/status.json"
         f_p = os.getcwd()+"/import_status/status.json"
-        con = {}
+        con = []
         self.obj(message)
         if os.path.exists(f_p):
             con = json.loads(open(f_p,"r").read())
-        con.update({str(datetime.now()).split(".")[0]:message})
+        con.append({"time":str(datetime.now()).split(".")[0],"message":message})
         f_w = open(f_p,"w")
         f_w.write(json.dumps(con))
         f_w.close()
@@ -82,6 +83,7 @@ class Import_Web_To_WittyParrot:
 
     def extract_web_data(self):
         print("started for extract_web_data of main")
+        self.log_json("started for extract_web_data of main")
         op_types = Extract_USC9_Page(yu.user["url"]).get_opinion_types()
         print("completed for extract_web_data main")
         for i in op_types:
@@ -103,6 +105,7 @@ class Import_Web_To_WittyParrot:
 
     def check_facets_presence(self):
         print("started check for facets presence")
+        self.log_json("started check for facets presence")
         # print(self.case_details["Published"]["case_details"][0].keys())
         # print(self.case_details["Unpublished"]["case_details"][0].keys())
         # self.model.update({"childs":{"Case Origin":{},"Case Type":{},"Authoring Judge":{},"Case Panel":{}}})
@@ -154,6 +157,7 @@ class Import_Web_To_WittyParrot:
 
     def check_folder_presense(self):
         print("started check for folder_presense")
+        self.log_json("started check for folder_presense")
         workspaces = {i["name"]:i["id"] for i in self.user.login_response["userProfile"]["userWorkspaces"]}
         f_st = self.status(folders=True,read=True)
         if not yu.user["folders"][0] in f_st:
@@ -186,6 +190,7 @@ class Import_Web_To_WittyParrot:
 
         for i in self.case_details:
             print('Started creation of wit for "{0}"'.format(i))
+            self.log_json('Started creation of wit for "{0}"'.format(i))
             w_c_s = self.status(wits=True,read=True)
             for j in self.case_details[i]["case_details"]:
 
@@ -306,7 +311,7 @@ class Import_Web_To_WittyParrot:
         if os.path.exists(dir_f+"demo_folder_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
         if os.path.exists(dir_f+"demo_wits_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
         Import_Web_To_WittyParrot.req_status=False
-
+        os.unlink(os.getcwd()+"/import_status/status.json")
 
 
 

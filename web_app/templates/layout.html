@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <style>
+                        #scroll-box {
+                            background:ivory;
+                            padding:15px;
+                            overflow-y: scroll
+                        }
+                    </style>
+        </head>
+    <body>
+    <div id="scroll-box" class="message-list">
+    {% for message in messages %}
+            <div class="status_messages">{{ message.time }} : {{ message.message }}</div>
+            <br>
+    {% endfor %}
+    {% if not messages %}
+        <div class="status_messages">There are no logs yet</div>
+        <br>
+    {% endif %}
+    </div>
+</body>
+</html>

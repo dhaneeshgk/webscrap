@@ -51,7 +51,7 @@
       <body>
         <div class="container">
             <form action="{{url_for('web_import_status')}}" method="GET">
-                    <button class="rdb" type="submit">import status</button>
+                    <button class="rdb" type="submit">status</button>
                 </form>
             <form action="{{url_for('logout')}}" method="POST">
                 <button class="rdl" type="submit">logout</button>
@@ -65,7 +65,8 @@
                   <!-- <label for="Identifiers">Identifiers</label> -->
                   <input class="info_input" title="Content Identifiers" placeholder="Enter Identifiers in comma separation" type="text" name="identifiers" required></br>
                   <input class="info_input" title="Work Space" placeholder="Enter Workspace Name" type="text" name="workspace" required></br>
-                  <input class="info_input" title="Facets" placeholder="Enter Facets Name" type="text" name="facet_name" required></br>
+                  <input class="info_input" title="Enter Root folder Name/Folder heirarchy in comma separation" placeholder="Enter Root folder Name/Folder heirarchy in comma separation" type="text" name="folder" required></br>
+                  <input class="info_input" title="Facet Node Name under which facets extracted should be created" placeholder="Enter Facet Node Name" type="text" name="facet_name" required></br>
                 {% if status %}
                      <button class="go-button" type="submit" disabled> Import content </button>
                      <div class="info">We are processing a request , you can submit for request once the request is done</div>
