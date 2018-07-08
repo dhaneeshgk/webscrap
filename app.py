@@ -335,7 +335,7 @@ class Import_Web_To_WittyParrot:
             self.log_json("Web import is completed for request")
         except Exception as e:
             print(e)
-            self.log_json("Error : Please check for workspace name, model name exist and re-submit the request"
+            self.log_json("Error : Please check for workspace name, model name exist and re-submit the request")
         # dir_f = FRAME_PATH+'/wittyparrot_sdk/data_storage/'
         # if os.path.exists(dir_f+"files"):shutil.rmtree(dir_f+"files")
         # if os.path.exists(dir_f+"demo_attachments_status.json"):os.unlink(dir_f+"demo_attachments_status.json")
