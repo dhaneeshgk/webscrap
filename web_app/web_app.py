@@ -48,6 +48,10 @@ def index():
         return redirect(url_for('web_import'))
     return redirect("/login")
 
+@app.route("/<name>")
+def non_exist(name):
+    return redirect("/login")
+
 @app.route('/login',methods = ['GET'])
 def login():
     if 'Authorization' in request.cookies:
@@ -86,7 +90,7 @@ def web_import_status():
             try:
                 # print("web_import_status")
                 # print(request.form)
-                folders = [i for i in request.form['folder'].split(",")]
+                folders = [i.strip() for i in request.form['folder'].strip().split(",")]
                 workspace = request.form["workspace"]
                 facet_name = request.form["facet_name"]
                 user_detail.update({"folders":folders})
