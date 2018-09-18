@@ -29,14 +29,14 @@ server.httpServer = http.createServer( function (req, res){
 
 
 // Instiating the https server
-server.httpsServerOptions = {
-    'key':fs.readFileSync(path.join(__dirname+'./../https/key.pem')),
-    'cert':fs.readFileSync(path.join(__dirname+'./../https/cert.pem'))
-};
+// server.httpsServerOptions = {
+//     'key':fs.readFileSync(path.join(__dirname+'./../https/key.pem')),
+//     'cert':fs.readFileSync(path.join(__dirname+'./../https/cert.pem'))
+// };
 
-server.httpsServer = https.createServer(server.httpsServerOptions,function (req, res){
-    server.unifiedServer(req,res)
-});
+// server.httpsServer = https.createServer(server.httpsServerOptions,function (req, res){
+//     server.unifiedServer(req,res)
+// });
 
 
 
