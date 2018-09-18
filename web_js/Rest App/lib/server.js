@@ -72,7 +72,7 @@ server.unifiedServer = function(req,res){
     
 
             // choose the handler this request should go to, if one is not Found choose notFound handler
-            var chooseHandler = typeof(server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound
+            var chooseHandler = typeof(server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : server.router["notFound"]
     
             // construct the data object to be sent
             var data = {
@@ -120,11 +120,10 @@ server.unifiedServer = function(req,res){
 // define a request router
 server.router = {
 
-    "ping" : handlers.ping,
-    "users" :handlers.users,
-    "tokens":handlers.tokens,
-    "checks":handlers.checks,
-    "notFound":handlers.notFound,
+    "ping" : handlers.ping.ping,
+    "users" :handlers.users.users,
+    "tokens":handlers.tokens.tokens,
+    "notFound":handlers.notFound.notFound
 
 }
 

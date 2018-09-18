@@ -25,7 +25,7 @@ var handlers = {}
 handlers.ping = ping;
 
 // notfound
-handlers.notFound = notFound
+handlers.notFound = notFound;
 
 // users
 handlers.users = users;
