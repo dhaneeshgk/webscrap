@@ -270,11 +270,13 @@ class Import_Web_To_WittyParrot:
                             self.log_json(w_e_message)
                             time.sleep(2)
                         except Exception as e:
-                            w_e_message = 'Not Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
-                            print(w_e_message, "below is the error")
-                            print(e)
-                            self.log_json("Error : "+str(e))
-                            self.log_json("Data : "+str(j))
+                            w_e_message = 'Not Completed creation of wit for case "{0}" due to content incompatibility'.format(j['Case No.']+"--"+j['Case Title'])
+                            # print(w_e_message, "below is the error")
+                            # print(e)
+                            # self.log_json("Error : "+str(e))
+                            # self.log_json("Data : "+str(j))
+                            print("Error : "+str(e))
+                            print("Data : "+str(j))
                             self.log_json(w_e_message)
 
             e_message = 'Completed creation of wit for "{0}"'.format(i)
