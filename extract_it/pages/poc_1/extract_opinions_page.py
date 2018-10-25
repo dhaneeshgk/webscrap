@@ -25,13 +25,13 @@ class Extract_Opinions_Page:
         return self.cases
 
     def get_case_metadata(self):
-        self.metadata_he = [str(header.string).replace("\xa0"," ").strip() for header in self.cases[2].select('th a') if str(header.string).replace("\xa0"," ").strip()]
+        self.metadata_he = [str(header.string).replace("\xa0"," ").strip() for header in self.cases[2].select('th a')]
         # self.opinions.update({"headers":self.metadata_he})
         return self.metadata_he
 
     
     def get_short_list(self):
-        self.metadata_h_s = {str(metadata_h.string).replace("\xa0"," ").strip():metadata_h['href'] for metadata_h in self.cases[2].select('th a') if str(metadata_h.string).replace("\xa0"," ").strip()}
+        self.metadata_h_s = {str(metadata_h.string).replace("\xa0"," ").strip():metadata_h['href'] for metadata_h in self.cases[2].select('th a')}
         return self.metadata_h_s
 
     def get_case_details(self,num_rec=20):
@@ -50,7 +50,7 @@ class Extract_Opinions_Page:
                     if metadata.find("a"):
                         if 'href' in metadata.find("a").attrs:
                             case_detail.update({"document":metadata.find("a").attrs['href']})
-                    case_detail.update({self.metadata_he[case.findAll("td").index(metadata)]:metadata.string})
+                    case_detail.update({self.metadata_he[case.findAll("td").index(metadata)]:str(metadata.string).strip()})
                 self.case_details.append(case_detail)
         return self.case_details
 
