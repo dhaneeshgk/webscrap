@@ -273,6 +273,8 @@ class Import_Web_To_WittyParrot:
                             w_e_message = 'Not Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
                             print(w_e_message, "below is the error")
                             print(e)
+                            self.log_json("Error : "+str(e))
+                            self.log_json("Data : "+str(j))
                             self.log_json(w_e_message)
 
             e_message = 'Completed creation of wit for "{0}"'.format(i)
