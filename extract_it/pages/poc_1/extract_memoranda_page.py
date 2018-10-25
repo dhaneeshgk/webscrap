@@ -12,7 +12,7 @@ class Extract_Memoranda_Page:
         self.get_case_metadata()
 
     def get_case_metadata(self):
-        self.metadata_he =[i.string for i in self.soup.find('tr',attrs={"id":"c_row_"}).select('th a b')]
+        self.metadata_he =[str(i.string).strip() for i in self.soup.find('tr',attrs={"id":"c_row_"}).select('th a b')]
         return self.metadata_he
 
     def get_case_details(self,num_rec=10):
@@ -22,7 +22,7 @@ class Extract_Memoranda_Page:
             for detail in case.findAll('td'):
                 if detail.find('a'):
                     case_detail.update({'document':detail.find('a').attrs['href']})
-                case_detail.update({self.metadata_he[case.findAll("td").index(detail)]:detail.string})
+                case_detail.update({self.metadata_he[case.findAll("td").index(detail)]:str(detail.string).strip()})
             self.case_details.append(case_detail)
         return self.case_details
 

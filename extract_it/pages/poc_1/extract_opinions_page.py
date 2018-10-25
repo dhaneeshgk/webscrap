@@ -25,13 +25,13 @@ class Extract_Opinions_Page:
         return self.cases
 
     def get_case_metadata(self):
-        self.metadata_he = [str(header.string).replace("\xa0"," ") for header in self.cases[2].select('th a')]
+        self.metadata_he = [str(header.string).replace("\xa0"," ").strip() for header in self.cases[2].select('th a') if str(header.string).replace("\xa0"," ").strip()]
         # self.opinions.update({"headers":self.metadata_he})
         return self.metadata_he
 
     
     def get_short_list(self):
-        self.metadata_h_s = {str(metadata_h.string).replace("\xa0"," "):metadata_h['href'] for metadata_h in self.cases[2].select('th a')}
+        self.metadata_h_s = {str(metadata_h.string).replace("\xa0"," ").strip():metadata_h['href'] for metadata_h in self.cases[2].select('th a') if str(metadata_h.string).replace("\xa0"," ").strip()}
         return self.metadata_h_s
 
     def get_case_details(self,num_rec=20):
