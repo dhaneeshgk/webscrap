@@ -216,58 +216,65 @@ class Import_Web_To_WittyParrot:
 
                 if not "NO OPINIONS FILED TODAY" == j['Case Title']:
                     if not j['Case No.']+"--"+j['Case Title'] in w_c_s:
-                        w_s_message = 'Started creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
-                        self.log_json(w_s_message)
-                        print(w_s_message)
-                        content = ""
-                        c_j = json.loads(open(FRAME_PATH+"/wittyparrot_sdk/apis_json/create_wit.json","r").read())
-                        # print(c_j)
+                        try:
+                            w_s_message = 'Started creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
+                            self.log_json(w_s_message)
+                            print(w_s_message)
+                            content = ""
+                            c_j = json.loads(open(FRAME_PATH+"/wittyparrot_sdk/apis_json/create_wit.json","r").read())
+                            # print(c_j)
 
-                        c_j["parentId"] = self.status(folders=True,read=True)[i]
+                            c_j["parentId"] = self.status(folders=True,read=True)[i]
 
-                        c_j['name'] = j['Case No.']+"--"+j['Case Title']
+                            c_j['name'] = j['Case No.']+"--"+j['Case Title']
 
-                        for p in j:
-                            if not p in ["document"]:
-                                content = content +"<div>"+ p +" : "+str(j[p])+"</div>"
-                        content = content.strip()+"<div>Details are in the attachment with Case No.</div>"
-                        c_j['content'] = content
-                        c_j['desc'] = content
+                            for p in j:
+                                if not p in ["document"]:
+                                    content = content +"<div>"+ p +" : "+str(j[p])+"</div>"
+                            content = content.strip()+"<div>Details are in the attachment with Case No.</div>"
+                            c_j['content'] = content
+                            c_j['desc'] = content
 
-                        if j["document"].find("http")<0:
-                            f_url = "http:"+j["document"]
-                        else:
-                            f_url = j["document"]
-                        at_res = requests.get(f_url)
-                        con = at_res.content
-                        f = open(self.attach_f_p+j["Case No."]+".pdf","wb")
-                        f.write(con)
-                        f.close()
-                        at_st = self.status(attachments=True,read=True)
-                        if not j["Case No."] in at_st:
-                            attach_l = self.user.upload_doc(self.attach_f_p+j["Case No."]+".pdf")
-                            self.status(attachments={j["Case No."]:attach_l})
-                            c_j['attachmentDetails'].append({"fileId":attach_l["fileId"],
-                            "fileName":attach_l["fileName"], "extention":".pdf","attachmentType": "LOCAL",
-                            "seqNumber": 0})
-                        else:
-                            c_j['attachmentDetails'].append(at_st[j["Case No."]])
-                            c_j['attachmentDetails'].append({"fileId":at_st[j["Case No."]]["fileId"],
-                            "fileName":at_st[j["Case No."]], "extention":".pdf","attachmentType": "LOCAL",
-                            "seqNumber": 0})
-                        
-                        for x in self.model['childs'].keys():
-                            if x in j:
-                                # print(self.model['childs'][i], j[i])
-                                # if j[x] and self.model['childs'][x]["childs"] and self.model['childs'][x]["childs"][j[x]]:
-                                c_j['categoryValues'].append(self.model['childs'][x]["childs"][j[x]]["details"])
-                        # print(c_j)
-                        w_c = self.user.create_wit(all_d=c_j)
-                        self.status(wits={w_c["name"]:w_c["id"]})
-                        w_e_message = 'Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
-                        print(w_e_message)
-                        self.log_json(w_e_message)
-                        time.sleep(2)
+                            if j["document"].find("http")<0:
+                                f_url = "http:"+j["document"]
+                            else:
+                                f_url = j["document"]
+                            at_res = requests.get(f_url)
+                            con = at_res.content
+                            f = open(self.attach_f_p+j["Case No."]+".pdf","wb")
+                            f.write(con)
+                            f.close()
+                            at_st = self.status(attachments=True,read=True)
+                            if not j["Case No."] in at_st:
+                                attach_l = self.user.upload_doc(self.attach_f_p+j["Case No."]+".pdf")
+                                self.status(attachments={j["Case No."]:attach_l})
+                                c_j['attachmentDetails'].append({"fileId":attach_l["fileId"],
+                                "fileName":attach_l["fileName"], "extention":".pdf","attachmentType": "LOCAL",
+                                "seqNumber": 0})
+                            else:
+                                c_j['attachmentDetails'].append(at_st[j["Case No."]])
+                                c_j['attachmentDetails'].append({"fileId":at_st[j["Case No."]]["fileId"],
+                                "fileName":at_st[j["Case No."]], "extention":".pdf","attachmentType": "LOCAL",
+                                "seqNumber": 0})
+                            
+                            for x in self.model['childs'].keys():
+                                if x in j:
+                                    # print(self.model['childs'][i], j[i])
+                                    # if j[x] and self.model['childs'][x]["childs"] and self.model['childs'][x]["childs"][j[x]]:
+                                    c_j['categoryValues'].append(self.model['childs'][x]["childs"][j[x]]["details"])
+                            # print(c_j)
+                            w_c = self.user.create_wit(all_d=c_j)
+                            self.status(wits={w_c["name"]:w_c["id"]})
+                            w_e_message = 'Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
+                            print(w_e_message)
+                            self.log_json(w_e_message)
+                            time.sleep(2)
+                        except Exception as e:
+                            w_e_message = 'Not Completed creation of wit for case "{0}"'.format(j['Case No.']+"--"+j['Case Title'])
+                            print(w_e_message, "below is the error")
+                            print(e)
+                            self.log_json(w_e_message)
+
             e_message = 'Completed creation of wit for "{0}"'.format(i)
             print(e_message)
             self.log_json(e_message)
